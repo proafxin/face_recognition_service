@@ -1,1 +1,1 @@
-# face_recognition_service
+# Face Recognition from Webcam
