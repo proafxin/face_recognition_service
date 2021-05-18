@@ -8,10 +8,20 @@ from os.path import (
     abspath,
     join,
     dirname,
+    splitext,
 )
+from os import listdir
 
 PWD = dirname(abspath(__file__))
-FILENAME = '1.jpg'
+IMGDIR = join(PWD, 'images')
+files = listdir(IMGDIR)
+
+def is_image(filename):
+    name, ext = splitext(filename)
+    if ext == '.jpg' or ext == 'png':
+        return True
+    
+    return False
 
 def capture_frames(video_capture, known_face_encodings, known_face_names, tol=.6):
     while True:
@@ -35,9 +45,9 @@ def capture_frames(video_capture, known_face_encodings, known_face_names, tol=.6
             if matches[match_best]:
                 name = known_face_names[match_best]
             
-            cv2.rectangle(frame, (left, top), (right, bottom), color=(0,0,255), thickness=2)
-            cv2.rectangle(frame, (left, bottom-35), (right, bottom), color=(255, 0, 0), thickness=cv2.FILLED)
-            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.rectangle(frame, (left, top), (right, bottom), color=(0,0,255), thickness=1)
+            cv2.rectangle(frame, (left, bottom-30), (right, bottom), color=(255, 0, 0), thickness=cv2.FILLED)
+            font = cv2.FONT_HERSHEY_COMPLEX
             cv2.putText(frame, name, (left+6, bottom-6), font, 1.0, color=(0, 255, 0), thickness=1)
         cv2.imshow('Webcam face recognition', frame)
 
@@ -49,13 +59,17 @@ def capture_frames(video_capture, known_face_encodings, known_face_names, tol=.6
 
 if __name__=='__main__':
     video_capture = cv2.VideoCapture(0)
-    path_img = join(PWD, FILENAME)
-    img = fr.load_image_file(path_img)
-    face_encodings = fr.face_encodings(img)
-
-    face_names = [
-        'Masum',
+    images = [
+        file for file in files if is_image(file)
     ]
+    face_encodings = []
+    face_names = []
+    for image in images:
+        path_img = join(IMGDIR, image)
+        img = fr.load_image_file(path_img)
+        face_encodings.append(fr.face_encodings(img)[0])
+        face_names.append(splitext(image)[0])
+
     capture_frames(
         video_capture,
         face_encodings,
