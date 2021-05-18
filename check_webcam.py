@@ -1,7 +1,5 @@
-from os import read
 import cv2
 import face_recognition as fr
-from face_recognition.api import face_distance, face_locations
 import numpy as np
 
 from os.path import (
@@ -14,7 +12,6 @@ from os import listdir
 
 PWD = dirname(abspath(__file__))
 IMGDIR = join(PWD, 'images')
-files = listdir(IMGDIR)
 
 def is_image(filename):
     name, ext = splitext(filename)
@@ -59,6 +56,7 @@ def capture_frames(video_capture, known_face_encodings, known_face_names, tol=.6
 
 if __name__=='__main__':
     video_capture = cv2.VideoCapture(0)
+    files = listdir(IMGDIR)
     images = [
         file for file in files if is_image(file)
     ]
